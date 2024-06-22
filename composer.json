@@ -1,0 +1,52 @@
+{
+    "name": "imarkin/message-repository-for-cycle",
+    "description": "EventSauce Message Repository for Cycle ORM",
+    "keywords": [
+        "spiral-packages",
+        "spiral",
+        "event-sauce",
+        "event-sourcing"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Igor Markin",
+            "email": "igorvdonsk@yandex.ru"
+        }
+    ],
+    "type": "library",
+    "require": {
+        "php": "^8.2",
+        "cycle/database": "^2.11",
+        "eventsauce/eventsauce": "^3.0",
+        "eventsauce/message-repository-table-schema": "^1.0",
+        "eventsauce/uuid-encoding": "^1.0",
+        "eventsauce/id-encoding": "^1.0",
+        "ramsey/uuid": "^4.1"
+    },
+    "require-dev": {
+        "eventsauce/message-outbox-test-tooling": "^1.2",
+        "eventsauce/message-repository-test-tooling": "^1.0",
+        "phpunit/phpunit": "^10.1",
+        "vimeo/psalm": "^5.15"
+    },
+    "autoload": {
+        "psr-4": {
+            "Imarkin\\EventSauce\\CycleMessageRepository\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --config=phpunit.xml",
+        "psalm": "vendor/bin/psalm --config=psalm.xml ./src"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

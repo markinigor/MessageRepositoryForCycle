@@ -20,13 +20,13 @@ use EventSauce\IdEncoding\IdEncoder;
 use EventSauce\MessageRepository\TableSchema\DefaultTableSchema;
 use EventSauce\MessageRepository\TableSchema\TableSchema;
 use Generator;
-use Ramsey\Uuid\Uuid;
 
 class CycleMessageRepository implements MessageRepository
 {
     private TableSchema $tableSchema;
     private IdEncoder $aggregateRootIdEncoder;
     private IdEncoder $eventIdEncoder;
+    private EventIdGenerator $eventIdGenerator;
 
     public function __construct(
         private DatabaseInterface $database,
@@ -36,10 +36,12 @@ class CycleMessageRepository implements MessageRepository
         ?TableSchema $tableSchema = null,
         ?IdEncoder $aggregateRootIdEncoder = null,
         ?IdEncoder $eventIdEncoder = null,
+        ?EventIdGenerator $eventIdGenerator = null,
     ) {
         $this->tableSchema = $tableSchema ?? new DefaultTableSchema();
         $this->aggregateRootIdEncoder = $aggregateRootIdEncoder ?? new BinaryUuidIdEncoder();
         $this->eventIdEncoder = $eventIdEncoder ?? $this->aggregateRootIdEncoder;
+        $this->eventIdGenerator = $eventIdGenerator ?? new UuidEventIdGenerator(7);
     }
 
     public function persist(Message ...$messages): void
@@ -64,7 +66,7 @@ class CycleMessageRepository implements MessageRepository
 
         foreach ($messages as $message) {
             $payload = $this->serializer->serializeMessage($message);
-            $payload['headers'][Header::EVENT_ID] ??= Uuid::uuid4()->toString();
+            $payload['headers'][Header::EVENT_ID] ??= $this->eventIdGenerator->generate();
 
             $messageParameters = [
                 $this->eventIdEncoder->encodeId($payload['headers'][Header::EVENT_ID]),
